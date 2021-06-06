@@ -3,6 +3,7 @@ package ru.mirea.tourist;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -29,6 +30,8 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,homeFragment).commit();
     }
+
+
     Home homeFragment = new Home();
     Search searchFragment = new Search();
     About aboutFragment = new About();

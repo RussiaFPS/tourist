@@ -3,14 +3,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Profile">
+    tools:context="ru.mirea.tourist.Profile">
 
 
     <TextView
         android:layout_width="250dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="50dp"
-        android:text="Авторизация"
+        android:text="Авторизация и Регистрация"
         android:textAlignment="center"
         android:layout_centerHorizontal="true"
         android:textSize="32sp"
@@ -59,7 +59,7 @@
         android:layout_marginTop="320dp"
         android:background="@drawable/input_design"
         android:padding="15dp"
-        android:text="Войти"
+        android:text="Авторизоваться"
         android:textAllCaps="false"
         android:textSize="18sp"
         android:textColor="@android:color/white"
@@ -74,7 +74,7 @@
         android:layout_marginRight="25dp"
         android:background="@drawable/input_design"
         android:padding="15dp"
-        android:text="Регистрация"
+        android:text="Зарегистрироваться"
         android:textAllCaps="false"
         android:textSize="18sp"
         android:textColor="@android:color/white"
