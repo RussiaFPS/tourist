@@ -69,6 +69,8 @@ public class Account extends Fragment {
         View view = inflater.inflate(R.layout.fragment_account, container, false);
         TextView UserName = (TextView) view.findViewById(R.id.User_name);
         Button exit_button = (Button) view.findViewById(R.id.exit_btn);
+        Button admin_button = (Button) view.findViewById(R.id.admin_btn);
+
         UserName.setText("Привет, " + Users.login_name);
 
         exit_button.setOnClickListener(new View.OnClickListener() {
@@ -81,6 +83,21 @@ public class Account extends Fragment {
                 transaction.commit();
             }
         });
+
+        admin_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(Users.root == "admin"){
+                    admin_panel admin_panelFragment = new admin_panel();
+                    FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                    transaction.replace(R.id.fragment_container,admin_panelFragment);
+                    transaction.commit();
+                }else{
+                    Toast.makeText(getActivity(), "У вас нет прав доступа", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
         return view;
     }
 

@@ -27,6 +27,21 @@
         android:textStyle="bold" />
 
     <Button
+        android:id="@+id/admin_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="25dp"
+        android:layout_marginRight="25dp"
+        android:layout_marginTop="300dp"
+        android:background="@drawable/input_design"
+        android:padding="15dp"
+        android:text="Админ панель"
+        android:textAllCaps="false"
+        android:textSize="18sp"
+        android:textColor="@android:color/white"
+        />
+
+    <Button
         android:id="@+id/exit_btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
