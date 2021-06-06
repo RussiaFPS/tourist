@@ -77,7 +77,6 @@ public class Profile extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-
     }
 
     @Override
@@ -194,6 +193,11 @@ public class Profile extends Fragment {
                             if(usersData.getPass().equals(pass)){
                                 Toast.makeText(getActivity(), "Успешно", Toast.LENGTH_SHORT).show();
                                 Users.isUserAuthorized = true;
+                                Users.login_name = login;
+
+
+                                loginInput.setText("");
+                                passInput.setText("");
 
                                 Account accountFragment = new Account();
                                 FragmentTransaction transaction = getFragmentManager().beginTransaction();

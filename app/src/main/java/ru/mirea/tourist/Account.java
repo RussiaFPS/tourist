@@ -3,10 +3,16 @@ package ru.mirea.tourist;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import ru.mirea.tourist.Model.Users;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -59,6 +65,28 @@ public class Account extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_account, container, false);
+
+        View view = inflater.inflate(R.layout.fragment_account, container, false);
+        TextView UserName = (TextView) view.findViewById(R.id.User_name);
+        Button exit_button = (Button) view.findViewById(R.id.exit_btn);
+        UserName.setText("Привет, " + Users.login_name);
+
+        exit_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ExitAccount();
+                Profile profile2Fragment = new Profile();
+                FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                transaction.replace(R.id.fragment_container,profile2Fragment);
+                transaction.commit();
+            }
+        });
+        return view;
+    }
+
+    private void ExitAccount(){
+        Users.isUserAuthorized=false;
+        Users.login_name="";
+        Toast.makeText(getActivity(), "Успешно", Toast.LENGTH_SHORT).show();
     }
 }
