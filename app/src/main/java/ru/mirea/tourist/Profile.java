@@ -4,14 +4,27 @@ import android.content.Intent;
 import android.graphics.MaskFilter;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.HashMap;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -28,6 +41,7 @@ public class Profile extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    private EditText loginInput,passInput;
 
     public Profile() {
         // Required empty public constructor
@@ -66,7 +80,71 @@ public class Profile extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_profile2, container, false);
+        View view = inflater.inflate(R.layout.fragment_profile2, container, false);
+        Button reg_button = (Button) view.findViewById(R.id.reg_btn);
+        loginInput = (EditText) view.findViewById(R.id.login_login_input);
+        passInput = (EditText) view.findViewById(R.id.login_password_input);
+        reg_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                CreateAccount();
+            }
+        });
+        return view;
+    }
+
+    private void CreateAccount(){
+        String login = loginInput.getText().toString();
+        String pass = passInput.getText().toString();
+
+        if(TextUtils.isEmpty(login)) {
+            Toast.makeText(getActivity(), "Введите логин", Toast.LENGTH_SHORT).show();
+        }
+        else if (TextUtils.isEmpty(pass)){
+            Toast.makeText(getActivity(), "Введите пароль", Toast.LENGTH_SHORT).show();
+        }
+        else{
+            ValidateLogin(login,pass);
+        }
+    }
+
+    private void ValidateLogin(final String login,final String pass){
+        final DatabaseReference RootRef;
+        RootRef = FirebaseDatabase.getInstance("https://tourist-3be36-default-rtdb.europe-west1.firebasedatabase.app/").getReference();
+
+        RootRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(!(dataSnapshot.child("Users").child(login).exists()))
+                {
+                    HashMap<String,Object> userDataMap = new HashMap<>();
+                    userDataMap.put("login",login);
+                    userDataMap.put("pass",pass);
+
+                    RootRef.child("Users").child(login).updateChildren(userDataMap)
+                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if(task.isSuccessful()){
+                                        Toast.makeText(getActivity(), "Регистрация прошла успешно", Toast.LENGTH_SHORT).show();
+                                    }
+                                    else{
+                                        Toast.makeText(getActivity(), "Ошибка", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            });
+                }
+                else
+                    {
+                        Toast.makeText(getActivity(), "Логин "+ login + " уже зарегистрирован", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
 
 }
