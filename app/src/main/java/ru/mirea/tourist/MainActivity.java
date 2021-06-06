@@ -14,6 +14,8 @@ import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import ru.mirea.tourist.Model.Users;
+
 public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
 
     BottomNavigationView bottomNavigationView;
@@ -36,6 +38,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     Search searchFragment = new Search();
     About aboutFragment = new About();
     Profile profileFragment = new Profile();
+    Account accountFragment = new Account();
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -50,8 +53,13 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,searchFragment).commit();
                 return true;
             case R.id.profileId:
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,profileFragment).commit();
-                return true;
+                if(Users.isUserAuthorized == false) {
+                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, profileFragment).commit();
+                    return true;
+                }else {
+                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,accountFragment ).commit();
+                    return true;
+                }
         }
         return false;
     }

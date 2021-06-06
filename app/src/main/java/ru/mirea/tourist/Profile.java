@@ -27,6 +27,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.HashMap;
 
 import ru.mirea.tourist.Model.Users;
+import ru.mirea.tourist.Prevalent.Prevalent;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -192,6 +193,12 @@ public class Profile extends Fragment {
                         if(usersData.getLogin().equals(login)){
                             if(usersData.getPass().equals(pass)){
                                 Toast.makeText(getActivity(), "Успешно", Toast.LENGTH_SHORT).show();
+                                Users.isUserAuthorized = true;
+
+                                Account accountFragment = new Account();
+                                FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                                transaction.replace(R.id.fragment_container,accountFragment);
+                                transaction.commit();
                             }
                             else{
                                 Toast.makeText(getActivity(), "Неверный пароль", Toast.LENGTH_SHORT).show();
