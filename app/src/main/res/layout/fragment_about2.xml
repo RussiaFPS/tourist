@@ -8,7 +8,7 @@
     <TextView
         android:layout_width="250dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="70dp"
+        android:layout_marginTop="150dp"
         android:text="Контакты"
         android:textAlignment="center"
         android:layout_centerHorizontal="true"

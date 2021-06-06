@@ -194,6 +194,30 @@ public class Profile extends Fragment {
                                 Toast.makeText(getActivity(), "Успешно", Toast.LENGTH_SHORT).show();
                                 Users.isUserAuthorized = true;
                                 Users.login_name = login;
+                                Users.root = "user";
+
+
+                                loginInput.setText("");
+                                passInput.setText("");
+
+                                Account accountFragment = new Account();
+                                FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                                transaction.replace(R.id.fragment_container,accountFragment);
+                                transaction.commit();
+                            }
+                            else{
+                                Toast.makeText(getActivity(), "Неверный пароль", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    }else if(snapshot.child("Admins").child(login).exists()){
+                        Users usersData = snapshot.child("Admins").child(login).getValue(Users.class);
+
+                        if(usersData.getLogin().equals(login)){
+                            if(usersData.getPass().equals(pass)){
+                                Toast.makeText(getActivity(), "Успешно,вы вошли как администратор", Toast.LENGTH_SHORT).show();
+                                Users.isUserAuthorized = true;
+                                Users.login_name = login;
+                                Users.root = "admin";
 
 
                                 loginInput.setText("");

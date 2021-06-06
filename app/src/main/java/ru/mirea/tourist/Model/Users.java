@@ -2,7 +2,7 @@ package ru.mirea.tourist.Model;
 
 public class Users {
     public static boolean isUserAuthorized;
-    public static String login_name;
+    public static String login_name,root;
     private String login,pass;
 
     public Users(){
