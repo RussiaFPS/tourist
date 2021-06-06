@@ -26,6 +26,8 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.HashMap;
 
+import ru.mirea.tourist.Model.Users;
+
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link Profile#newInstance} factory method to
@@ -42,6 +44,7 @@ public class Profile extends Fragment {
     private String mParam1;
     private String mParam2;
     private EditText loginInput,passInput;
+    private String parentDbName = "Users";
 
     public Profile() {
         // Required empty public constructor
@@ -82,12 +85,19 @@ public class Profile extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_profile2, container, false);
         Button reg_button = (Button) view.findViewById(R.id.reg_btn);
+        Button login_button = (Button) view.findViewById(R.id.login_btn);
         loginInput = (EditText) view.findViewById(R.id.login_login_input);
         passInput = (EditText) view.findViewById(R.id.login_password_input);
         reg_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 CreateAccount();
+            }
+        });
+        login_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                LoginAccount();
             }
         });
         return view;
@@ -102,6 +112,10 @@ public class Profile extends Fragment {
         }
         else if (TextUtils.isEmpty(pass)){
             Toast.makeText(getActivity(), "Введите пароль", Toast.LENGTH_SHORT).show();
+        }else if(login.length()<5 || login.length()>20){
+            Toast.makeText(getActivity(), "Длинна логина от 5 до 20 символов", Toast.LENGTH_SHORT).show();
+        }else if(pass.length()<10 || pass.length()>30){
+            Toast.makeText(getActivity(), "Длинна пароля от 10 до 30 символов", Toast.LENGTH_SHORT).show();
         }
         else{
             ValidateLogin(login,pass);
@@ -142,9 +156,58 @@ public class Profile extends Fragment {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-
+                Toast.makeText(getActivity(), "Ошибка подключения", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+    private void LoginAccount(){
+        String login = loginInput.getText().toString();
+        String pass = passInput.getText().toString();
+
+        if(TextUtils.isEmpty(login)) {
+            Toast.makeText(getActivity(), "Введите логин", Toast.LENGTH_SHORT).show();
+        }
+        else if (TextUtils.isEmpty(pass)){
+            Toast.makeText(getActivity(), "Введите пароль", Toast.LENGTH_SHORT).show();
+        }else if(login.length()<5 || login.length()>20){
+            Toast.makeText(getActivity(), "Длинна логина от 5 до 20 символов", Toast.LENGTH_SHORT).show();
+        }else if(pass.length()<10 || pass.length()>30){
+            Toast.makeText(getActivity(), "Длинна пароля от 10 до 30 символов", Toast.LENGTH_SHORT).show();
+        }else{
+            ValidateAuthorization(login,pass);
+        }
+    }
+
+    private void ValidateAuthorization(String login,String pass) {
+            final DatabaseReference RootRef;
+            RootRef = FirebaseDatabase.getInstance("https://tourist-3be36-default-rtdb.europe-west1.firebasedatabase.app/").getReference();
+
+            RootRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    if(snapshot.child(parentDbName).child(login).exists())
+                    {
+                        Users usersData = snapshot.child(parentDbName).child(login).getValue(Users.class);
+
+                        if(usersData.getLogin().equals(login)){
+                            if(usersData.getPass().equals(pass)){
+                                Toast.makeText(getActivity(), "Успешно", Toast.LENGTH_SHORT).show();
+                            }
+                            else{
+                                Toast.makeText(getActivity(), "Неверный пароль", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    }
+                    else{
+                        Toast.makeText(getActivity(), "Аккаунт не существует", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull  DatabaseError error) {
+                    Toast.makeText(getActivity(), "Ошибка подключения", Toast.LENGTH_SHORT).show();
+                }
+            });
     }
 
 }
