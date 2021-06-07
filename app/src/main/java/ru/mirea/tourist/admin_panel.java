@@ -57,6 +57,7 @@ public class admin_panel extends Fragment {
     private DatabaseReference mDataBase;
     private String USER_KEY = "Users";
     private EditText loginInputAdd,passInputAdd;
+    private String login_dell;
 
     public admin_panel() {
         // Required empty public constructor
@@ -105,12 +106,34 @@ public class admin_panel extends Fragment {
 
 
         Button add_users = (Button) view.findViewById(R.id.admin_add_btn);
+        Button dell_users = (Button) view.findViewById(R.id.admin_dell_btn);
         loginInputAdd = (EditText) view.findViewById(R.id.admin_login_add_input);
         passInputAdd = (EditText) view.findViewById(R.id.admin_pass_add_input);
+        EditText loginInputDell = (EditText) view.findViewById(R.id.admin_dell_login);
+
         add_users.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 CreateAccount();
+            }
+        });
+        dell_users.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                login_dell = loginInputDell.getText().toString();
+                if(!login_dell.isEmpty()){
+                    DatabaseReference dUsers = FirebaseDatabase.getInstance("https://tourist-3be36-default-rtdb.europe-west1.firebasedatabase.app/").getReference("Users");
+                    dUsers.child(login_dell).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if(task.isSuccessful()) {
+                                loginInputDell.setText("");
+                            }
+                        }
+                    });
+                }else{
+                    Toast.makeText(getActivity(), "Введите логин", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -155,6 +178,8 @@ public class admin_panel extends Fragment {
                                 public void onComplete(@NonNull Task<Void> task) {
                                     if(task.isSuccessful()){
                                         Toast.makeText(getActivity(), "Регистрация прошла успешно", Toast.LENGTH_SHORT).show();
+                                        loginInputAdd.setText("");
+                                        passInputAdd.setText("");
                                     }
                                     else{
                                         Toast.makeText(getActivity(), "Ошибка", Toast.LENGTH_SHORT).show();
