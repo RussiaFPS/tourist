@@ -104,6 +104,6 @@ public class Account extends Fragment {
     private void ExitAccount(){
         Users.isUserAuthorized=false;
         Users.login_name="";
-        Toast.makeText(getActivity(), "Успешно", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getActivity(), "Вы вышли из аккаунта", Toast.LENGTH_SHORT).show();
     }
 }

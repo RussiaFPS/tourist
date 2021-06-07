@@ -2,11 +2,36 @@ package ru.mirea.tourist;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Adapter;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ListView;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.GenericTypeIndicator;
+import com.google.firebase.database.ValueEventListener;
+
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.List;
+
+import ru.mirea.tourist.Model.Users;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -23,6 +48,11 @@ public class admin_panel extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    private ListView listView;
+    private ArrayAdapter<String> adapter;
+    private List<String> listData;
+    private DatabaseReference mDataBase;
+    private String USER_KEY = "Users";
 
     public admin_panel() {
         // Required empty public constructor
@@ -59,6 +89,38 @@ public class admin_panel extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_admin_panel, container, false);
+        View view = inflater.inflate(R.layout.fragment_admin_panel, container, false);
+
+        listView = view.findViewById(R.id.list_account);
+        listData = new ArrayList<>();
+        adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1,listData);
+        listView.setAdapter(adapter);
+
+        mDataBase = FirebaseDatabase.getInstance("https://tourist-3be36-default-rtdb.europe-west1.firebasedatabase.app/").getReference(USER_KEY);
+        getDataFromDB();
+        return view;
     }
+
+    private void getDataFromDB(){
+        ValueEventListener vListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull  DataSnapshot snapshot) {
+                if(listData.size() > 0) listData.clear();
+
+                for(DataSnapshot ds : snapshot.getChildren()){
+                    Users user = ds.getValue(Users.class);
+                    assert user != null;
+                    listData.add(user.login);
+                }
+                adapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(@NonNull  DatabaseError error) {
+
+            }
+        };
+        mDataBase.addValueEventListener(vListener);
+    }
+
 }
