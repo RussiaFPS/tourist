@@ -5,6 +5,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +15,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -29,6 +31,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import ru.mirea.tourist.Model.Users;
@@ -53,6 +56,7 @@ public class admin_panel extends Fragment {
     private List<String> listData;
     private DatabaseReference mDataBase;
     private String USER_KEY = "Users";
+    private EditText loginInputAdd,passInputAdd;
 
     public admin_panel() {
         // Required empty public constructor
@@ -98,7 +102,77 @@ public class admin_panel extends Fragment {
 
         mDataBase = FirebaseDatabase.getInstance("https://tourist-3be36-default-rtdb.europe-west1.firebasedatabase.app/").getReference(USER_KEY);
         getDataFromDB();
+
+
+        Button add_users = (Button) view.findViewById(R.id.admin_add_btn);
+        loginInputAdd = (EditText) view.findViewById(R.id.admin_login_add_input);
+        passInputAdd = (EditText) view.findViewById(R.id.admin_pass_add_input);
+        add_users.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                CreateAccount();
+            }
+        });
+
         return view;
+    }
+
+    private void CreateAccount(){
+        String login = loginInputAdd.getText().toString();
+        String pass = passInputAdd.getText().toString();
+
+        if(TextUtils.isEmpty(login)) {
+            Toast.makeText(getActivity(), "Введите логин", Toast.LENGTH_SHORT).show();
+        }
+        else if (TextUtils.isEmpty(pass)){
+            Toast.makeText(getActivity(), "Введите пароль", Toast.LENGTH_SHORT).show();
+        }else if(login.length()<5 || login.length()>20){
+            Toast.makeText(getActivity(), "Длинна логина от 5 до 20 символов", Toast.LENGTH_SHORT).show();
+        }else if(pass.length()<10 || pass.length()>30){
+            Toast.makeText(getActivity(), "Длинна пароля от 10 до 30 символов", Toast.LENGTH_SHORT).show();
+        }
+        else{
+            ValidateLogin(login,pass);
+        }
+    }
+
+    private void ValidateLogin(final String login,final String pass){
+        final DatabaseReference RootRef;
+        RootRef = FirebaseDatabase.getInstance("https://tourist-3be36-default-rtdb.europe-west1.firebasedatabase.app/").getReference();
+
+        RootRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(!(dataSnapshot.child("Users").child(login).exists()))
+                {
+                    HashMap<String,Object> userDataMap = new HashMap<>();
+                    userDataMap.put("login",login);
+                    userDataMap.put("pass",pass);
+
+                    RootRef.child("Users").child(login).updateChildren(userDataMap)
+                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if(task.isSuccessful()){
+                                        Toast.makeText(getActivity(), "Регистрация прошла успешно", Toast.LENGTH_SHORT).show();
+                                    }
+                                    else{
+                                        Toast.makeText(getActivity(), "Ошибка", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            });
+                }
+                else
+                {
+                    Toast.makeText(getActivity(), "Логин "+ login + " уже зарегистрирован", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(getActivity(), "Ошибка подключения", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void getDataFromDB(){

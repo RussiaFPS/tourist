@@ -84,7 +84,7 @@
         android:layout_marginRight="25dp"
         android:layout_marginLeft="240dp"
         android:hint="Пароль"
-        android:inputType="text"
+        android:inputType="textPassword"
         android:textColorHint="@android:color/black"
         android:textColor="@android:color/black"
         android:textSize="18sp"
