@@ -25,4 +25,84 @@
         android:textSize="22sp"
         android:id="@+id/list_account"/>
 
+    <EditText
+        android:id="@+id/admin_login_dell_input"
+        android:layout_width="100dp"
+        android:layout_height="50dp"
+        android:background="@drawable/input_design"
+        android:padding="15dp"
+        android:layout_marginTop="300dp"
+        android:layout_marginRight="25dp"
+        android:layout_marginLeft="25dp"
+        android:hint="Логин"
+        android:inputType="text"
+        android:textColorHint="@android:color/black"
+        android:textColor="@android:color/black"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        />
+
+    <Button
+        android:id="@+id/admin_dell_btn"
+        android:layout_width="150dp"
+        android:layout_height="70dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="25dp"
+        android:layout_marginTop="360dp"
+        android:background="@drawable/input_design"
+        android:padding="15dp"
+        android:text="Удалить"
+        android:textAllCaps="false"
+        android:textSize="18sp"
+        android:textColor="@android:color/white"
+        />
+
+    <EditText
+        android:id="@+id/admin_login_add_input"
+        android:layout_width="100dp"
+        android:layout_height="50dp"
+        android:background="@drawable/input_design"
+        android:padding="15dp"
+        android:layout_marginTop="300dp"
+        android:layout_marginRight="25dp"
+        android:layout_marginLeft="240dp"
+        android:hint="Логин"
+        android:inputType="text"
+        android:textColorHint="@android:color/black"
+        android:textColor="@android:color/black"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        />
+
+    <EditText
+        android:id="@+id/admin_pass_add_input"
+        android:layout_width="100dp"
+        android:layout_height="50dp"
+        android:background="@drawable/input_design"
+        android:padding="15dp"
+        android:layout_marginTop="360dp"
+        android:layout_marginRight="25dp"
+        android:layout_marginLeft="240dp"
+        android:hint="Пароль"
+        android:inputType="text"
+        android:textColorHint="@android:color/black"
+        android:textColor="@android:color/black"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        />
+
+    <Button
+        android:id="@+id/admin_add_btn"
+        android:layout_width="170dp"
+        android:layout_height="70dp"
+        android:layout_marginLeft="210dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginTop="420dp"
+        android:background="@drawable/input_design"
+        android:padding="15dp"
+        android:text="Добавить"
+        android:textAllCaps="false"
+        android:textSize="18sp"
+        android:textColor="@android:color/white"
+        />
 </RelativeLayout>
