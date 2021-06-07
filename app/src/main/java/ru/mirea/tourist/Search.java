@@ -104,7 +104,9 @@ public class Search extends Fragment {
                 City_name = spinner.getSelectedItem().toString();
                 mDataBase = FirebaseDatabase.getInstance("https://tourist-3be36-default-rtdb.europe-west1.firebasedatabase.app/").getReference(City_name);
                 getDataFromDB();
-                setOnClickItem();
+                if(Users.isUserAuthorized == true) {
+                    setOnClickItem();
+                }
             }
         });
 
