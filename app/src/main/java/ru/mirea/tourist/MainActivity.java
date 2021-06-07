@@ -50,8 +50,16 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,homeFragment).commit();
                 return true;
             case R.id.searchId:
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,searchFragment).commit();
-                return true;
+                if(Users.isUserAuthorized == true) {
+                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, searchFragment).commit();
+                    return true;
+                }else{
+                    bottomNavigationView.setSelectedItemId(R.id.homeId);
+                    bottomNavigationView.setOnNavigationItemSelectedListener(this);
+                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,homeFragment).commit();
+                    Toast.makeText(this, "Нужно авторизоваться", Toast.LENGTH_SHORT).show();
+                    return true;
+                }
             case R.id.profileId:
                 if(Users.isUserAuthorized == false) {
                     getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, profileFragment).commit();
