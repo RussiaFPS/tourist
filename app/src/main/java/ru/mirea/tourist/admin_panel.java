@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.text.TextUtils;
 import android.util.Log;
@@ -11,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Adapter;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -34,6 +36,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import ru.mirea.tourist.Model.City;
 import ru.mirea.tourist.Model.Users;
 
 /**
@@ -57,7 +60,7 @@ public class admin_panel extends Fragment {
     private DatabaseReference mDataBase;
     private String USER_KEY = "Users";
     private EditText loginInputAdd,passInputAdd;
-    private String login_dell;
+    private List<Users> listTemp;
 
     public admin_panel() {
         // Required empty public constructor
@@ -98,18 +101,19 @@ public class admin_panel extends Fragment {
 
         listView = view.findViewById(R.id.list_account);
         listData = new ArrayList<>();
+        listTemp = new ArrayList<>();
         adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1,listData);
         listView.setAdapter(adapter);
 
         mDataBase = FirebaseDatabase.getInstance("https://tourist-3be36-default-rtdb.europe-west1.firebasedatabase.app/").getReference(USER_KEY);
         getDataFromDB();
+        setOnClickItem();
 
 
         Button add_users = (Button) view.findViewById(R.id.admin_add_btn);
-        Button dell_users = (Button) view.findViewById(R.id.admin_dell_btn);
         loginInputAdd = (EditText) view.findViewById(R.id.admin_login_add_input);
         passInputAdd = (EditText) view.findViewById(R.id.admin_pass_add_input);
-        EditText loginInputDell = (EditText) view.findViewById(R.id.admin_dell_login);
+
 
         add_users.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -117,26 +121,6 @@ public class admin_panel extends Fragment {
                 CreateAccount();
             }
         });
-        dell_users.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                login_dell = loginInputDell.getText().toString();
-                if(!login_dell.isEmpty()){
-                    DatabaseReference dUsers = FirebaseDatabase.getInstance("https://tourist-3be36-default-rtdb.europe-west1.firebasedatabase.app/").getReference("Users");
-                    dUsers.child(login_dell).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            if(task.isSuccessful()) {
-                                loginInputDell.setText("");
-                            }
-                        }
-                    });
-                }else{
-                    Toast.makeText(getActivity(), "Введите логин", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-
         return view;
     }
 
@@ -205,11 +189,13 @@ public class admin_panel extends Fragment {
             @Override
             public void onDataChange(@NonNull  DataSnapshot snapshot) {
                 if(listData.size() > 0) listData.clear();
+                if(listTemp.size() > 0) listTemp.clear();
 
                 for(DataSnapshot ds : snapshot.getChildren()){
                     Users user = ds.getValue(Users.class);
                     assert user != null;
                     listData.add(user.login);
+                    listTemp.add(user);
                 }
                 adapter.notifyDataSetChanged();
             }
@@ -220,6 +206,24 @@ public class admin_panel extends Fragment {
             }
         };
         mDataBase.addValueEventListener(vListener);
+    }
+
+    private void setOnClickItem(){
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Users user = listTemp.get(i);
+
+                Fragment fr = new UserAbout();
+                Bundle args = new Bundle();
+                args.putString("login", user.login);
+                fr.setArguments(args);
+
+                FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                transaction.replace(R.id.fragment_container,fr);
+                transaction.commit();
+            }
+        });
     }
 
 }
