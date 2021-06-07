@@ -4,10 +4,12 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -48,6 +50,7 @@ public class Search extends Fragment {
     private DatabaseReference mDataBase;
     private String City_name;
     private Spinner spinner;
+    private List<City> listTemp;
 
     public Search() {
         // Required empty public constructor
@@ -91,6 +94,7 @@ public class Search extends Fragment {
 
         listView = view.findViewById(R.id.list_information);
         listData = new ArrayList<>();
+        listTemp = new ArrayList<>();
         adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1,listData);
         listView.setAdapter(adapter);
 
@@ -100,6 +104,7 @@ public class Search extends Fragment {
                 City_name = spinner.getSelectedItem().toString();
                 mDataBase = FirebaseDatabase.getInstance("https://tourist-3be36-default-rtdb.europe-west1.firebasedatabase.app/").getReference(City_name);
                 getDataFromDB();
+                setOnClickItem();
             }
         });
 
@@ -112,11 +117,12 @@ public class Search extends Fragment {
             @Override
             public void onDataChange(@NonNull  DataSnapshot snapshot) {
                 if(listData.size() > 0) listData.clear();
-
+                if(listTemp.size() > 0) listTemp.clear();
                 for(DataSnapshot ds : snapshot.getChildren()){
                     City city = ds.getValue(City.class);
                     assert city != null;
                     listData.add(city.lions);
+                    listTemp.add(city);
                 }
                 adapter.notifyDataSetChanged();
             }
@@ -127,6 +133,26 @@ public class Search extends Fragment {
             }
         };
         mDataBase.addValueEventListener(vListener);
+    }
+
+    private void setOnClickItem(){
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                City city = listTemp.get(i);
+
+                Fragment fr = new LionsAbout();
+                Bundle args = new Bundle();
+                args.putString("name", city.lions);
+                args.putString("metro", city.metro);
+                args.putString("about", city.about);
+                fr.setArguments(args);
+
+                FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                transaction.replace(R.id.fragment_container,fr);
+                transaction.commit();
+            }
+        });
     }
 
 
